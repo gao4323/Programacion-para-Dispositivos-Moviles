@@ -1,4 +1,9 @@
-//Clase productos que puede calcular el descuento de un producto
+/*
+Clase Producto con precio y descuento, incluye validaciones y cálculo del precio final.
+Autor: Gabriel Matias Jara Zapana
+Fecha creación: 04/04/2026
+Fecha última modificación: 04/04/2026
+*/
 
 class Producto {
 
@@ -33,7 +38,7 @@ class Producto {
 }
 
 fun main() {
-    
+
     val producto = Producto()
     producto.precio = 150.0
     producto.descuento = 20.0
