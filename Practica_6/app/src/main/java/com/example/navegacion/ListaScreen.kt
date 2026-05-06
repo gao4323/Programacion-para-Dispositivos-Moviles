@@ -2,7 +2,7 @@
  * Descripción: Pantalla principal que muestra la lista de contactos con opciones para
  *              marcar como favorito, eliminar y navegar al formulario de nuevo contacto.
  *              Los favoritos aparecen al inicio de la lista.
- * Autor: Práctica 6 - Navegación y Listas en Jetpack Compose
+ * Autor: Gabriel Matias Jara Zapana
  * Fecha de creación: 2025-05-05
  * Fecha de última modificación: 2025-05-05
  */

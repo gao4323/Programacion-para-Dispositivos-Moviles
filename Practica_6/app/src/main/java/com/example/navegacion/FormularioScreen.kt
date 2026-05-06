@@ -2,7 +2,7 @@
  * Descripción: Pantalla de formulario para registrar un nuevo contacto.
  *              Permite ingresar nombre y teléfono, y navegar de regreso
  *              a la lista al guardar. El estado se maneja con remember.
- * Autor: Práctica 6 - Navegación y Listas en Jetpack Compose
+ * Autor: Gabriel Matias Jara Zapana
  * Fecha de creación: 2025-05-05
  * Fecha de última modificación: 2025-05-05
  */
