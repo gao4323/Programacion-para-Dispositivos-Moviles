@@ -14,49 +14,74 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+// Pantalla principal del juego
 @Composable
 fun GameScreen(
+
     navController: NavController,
     viewModel: GameViewModel
 ) {
 
+    // Obtiene el color actual
     val currentColor by viewModel.currentColor.collectAsState()
+
+    // Obtiene el puntaje actual
     val score by viewModel.score.collectAsState()
+
+    // Obtiene el tiempo restante
     val timeLeft by viewModel.timeLeft.collectAsState()
+
+    // Obtiene el mensaje de correcto o incorrecto
     val message by viewModel.message.collectAsState()
 
+    // Obtiene el contexto actual de la aplicación
     val context = LocalContext.current
+
+    // Crea el administrador de sonidos
     val soundManager = SoundManager(context)
 
-    // Inicia el juego
+    // Inicia la música de fondo
     LaunchedEffect(Unit) {
+
         viewModel.startGame()
         soundManager.startBackgroundMusic()
     }
 
-    // Cuando el tiempo llegue a 0
+    // Si el tiempo terminó muestra el resultado
     LaunchedEffect(timeLeft) {
 
         if (timeLeft == 0) {
-            soundManager.stopBackgroundMusic()
             navController.navigate("result")
         }
     }
 
+    DisposableEffect(Unit) {
+
+        onDispose {
+            soundManager.stopBackgroundMusic()
+        }
+    }
+
+    // Columna principal de la interfaz
     Column(
         modifier = Modifier
+
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFFEC4899), Color(0xFF86198F))
+                    colors = listOf(
+                        Color(0xFFEC4899),
+                        Color(0xFF86198F)
+                    )
                 )
             )
-            .padding(20.dp),
 
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
+        // Texto del temporizador
         Text(
             text = "Tiempo: $timeLeft",
             fontSize = 28.sp,
@@ -66,7 +91,7 @@ fun GameScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Puntaje
+        // Texto del puntaje
         Text(
             text = "Puntaje: $score",
             fontSize = 28.sp,
@@ -76,7 +101,7 @@ fun GameScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Cuadro de color
+        // Caja que muestra el color actual
         Box(
             modifier = Modifier
                 .size(220.dp)
@@ -85,15 +110,19 @@ fun GameScreen(
 
         Spacer(modifier = Modifier.height(70.dp))
 
+        // Primera fila de botones
         Row(
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
 
+            // Botón rojo
             Button(
                 onClick = {
 
+
                     if (currentColor == Color.Red) {
                         soundManager.playCorrect()
+
                     } else {
                         soundManager.playWrong()
                     }
@@ -101,6 +130,7 @@ fun GameScreen(
                     viewModel.selectColor(Color.Red)
 
                 },
+
                 modifier = Modifier
                     .width(140.dp)
                     .height(60.dp),
@@ -109,6 +139,8 @@ fun GameScreen(
                     containerColor = Color(0xFFEF4444)
                 )
             ) {
+
+                // Texto del botón
                 Text(
                     "Rojo",
                     fontSize = 20.sp,
@@ -116,18 +148,20 @@ fun GameScreen(
                 )
             }
 
+            // Botón azul
             Button(
                 onClick = {
 
                     if (currentColor == Color.Blue) {
                         soundManager.playCorrect()
+
                     } else {
                         soundManager.playWrong()
                     }
-
                     viewModel.selectColor(Color.Blue)
 
                 },
+
                 modifier = Modifier
                     .width(140.dp)
                     .height(60.dp),
@@ -136,6 +170,8 @@ fun GameScreen(
                     containerColor = Color(0xFF3B82F6)
                 )
             ) {
+
+                // Texto del botón
                 Text(
                     "Azul",
                     fontSize = 20.sp,
@@ -151,6 +187,7 @@ fun GameScreen(
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
 
+            // Botón verde
             Button(
                 onClick = {
 
@@ -159,10 +196,10 @@ fun GameScreen(
                     } else {
                         soundManager.playWrong()
                     }
-
                     viewModel.selectColor(Color.Green)
 
                 },
+
                 modifier = Modifier
                     .width(140.dp)
                     .height(60.dp),
@@ -171,6 +208,8 @@ fun GameScreen(
                     containerColor = Color(0xFF10B981)
                 )
             ) {
+
+                // Texto del botón
                 Text(
                     "Verde",
                     fontSize = 20.sp,
@@ -178,18 +217,18 @@ fun GameScreen(
                 )
             }
 
+            // Botón amarillo
             Button(
                 onClick = {
-
                     if (currentColor == Color.Yellow) {
                         soundManager.playCorrect()
                     } else {
                         soundManager.playWrong()
                     }
-
                     viewModel.selectColor(Color.Yellow)
 
                 },
+
                 modifier = Modifier
                     .width(140.dp)
                     .height(60.dp),
@@ -198,6 +237,8 @@ fun GameScreen(
                     containerColor = Color(0xFFF59E0B),
                 )
             ) {
+
+                // Texto del botón
                 Text(
                     "Amarillo",
                     fontSize = 18.sp,

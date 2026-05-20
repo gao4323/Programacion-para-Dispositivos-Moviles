@@ -17,32 +17,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+// Pantalla de resultados del juego
 @Composable
 fun ResultScreen(
+
     navController: NavController,
     viewModel: GameViewModel
 ) {
+
+    // Obtiene el puntaje y el historial de partidas
     val score by viewModel.score.collectAsState()
     val history by viewModel.history.collectAsState()
 
-
+    // Columna principal de la pantalla
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFFEC4899), Color(0xFF86198F))
+                    colors = listOf(
+                        Color(0xFFEC4899), // Rosa
+                        Color(0xFF86198F)  // Morado
+                    )
                 )
             )
+
             .padding(20.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Título
+        //Muestra que ya se termino la partida
         Text(
-            text = "Juego Terminado",
+            text = "Fin de la Partida",
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFFFFFFF)
@@ -50,16 +59,16 @@ fun ResultScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Puntaje final
+        // Muestra el puntaje de la Partida
         Text(
-            text = "Puntaje final: $score",
+            text = "Puntaje : $score",
             fontSize = 26.sp,
             color = Color(0xFFFFFFFF)
         )
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        // Puntaje más alto
+        // Muestra el puntaje más alto del Historial
         Text(
             text = "Puntaje más alto: ${viewModel.getHighScore()}",
             fontSize = 24.sp,
@@ -68,7 +77,7 @@ fun ResultScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Historial
+        // Título del historial
         Text(
             text = "Historial",
             fontSize = 28.sp,
@@ -78,19 +87,23 @@ fun ResultScreen(
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        // Lista de partidas
+        // Lista desplazable de partidas anteriores
         LazyColumn(
             modifier = Modifier.height(250.dp)
         ) {
+
             items(history) { item ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 10.dp),
+
                     colors = CardDefaults.cardColors(
                         containerColor = Color(0xFFEC4899)
                     )
                 ) {
+
+                    // Texto con información de las partidas
                     Text(
                         text = "Partida ${item.gameNumber}: ${item.score} puntos",
                         modifier = Modifier.padding(15.dp),
@@ -103,21 +116,25 @@ fun ResultScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Botón Jugar Otra Vez
+        // Botón para volver a jugar
         Button(
             onClick = {
                 navController.navigate("game")
             },
+
             modifier = Modifier
                 .width(220.dp)
                 .height(60.dp),
+
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFFFFFFF),
                 contentColor = Color(0xFF86198F)
             )
         ) {
+
+            // Texto dentro del botón
             Text(
-                text = "Jugar otra vez",
+                text = "Intentar de nuevo",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Medium
             )

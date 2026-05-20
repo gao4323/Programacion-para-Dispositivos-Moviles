@@ -3,37 +3,43 @@ package com.example.parcial
 import android.content.Context
 import android.media.MediaPlayer
 
+// Clase que administra los sonidos del juego
 class SoundManager(private val context: Context) {
 
-    // Música de fondo
     private var backgroundMusic: MediaPlayer? = null
 
-    // Sonido correcto
+    //Sonido de acierto
     fun playCorrect() {
         MediaPlayer.create(context, R.raw.correcto).start()
     }
 
-    // Sonido incorrecto
+    //Sonido de fallo
     fun playWrong() {
         MediaPlayer.create(context, R.raw.error).start()
     }
 
-    // Iniciar música de fondo
+    //Musica de fondo
     fun startBackgroundMusic() {
 
-        backgroundMusic = MediaPlayer.create(context, R.raw.musica)
-
-        backgroundMusic?.isLooping = true
-
-        backgroundMusic?.start()
+        // Evita crear múltiples reproductores si ya existe uno
+        if (backgroundMusic == null) {
+            backgroundMusic = MediaPlayer.create(context, R.raw.musica)
+            backgroundMusic?.isLooping = true
+            backgroundMusic?.start()
+        }
     }
 
-    // Detener música
+    // Detener la música de fondo
     fun stopBackgroundMusic() {
 
-        backgroundMusic?.stop()
+        backgroundMusic?.apply {
 
-        backgroundMusic?.release()
+            // Verifica si la música se está reproduciendo y la detiene
+            if (isPlaying) {
+                stop()
+            }
+            release()
+        }
 
         backgroundMusic = null
     }

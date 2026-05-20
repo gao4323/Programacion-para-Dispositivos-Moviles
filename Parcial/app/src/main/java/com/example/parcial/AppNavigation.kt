@@ -1,10 +1,11 @@
 package com.example.parcial
 
+
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 
-
+// Controlar la navegación de la aplicación
 @Composable
 fun AppNavigation() {
 
@@ -12,10 +13,10 @@ fun AppNavigation() {
     val gameViewModel: GameViewModel = viewModel()
 
     NavHost(
+
         navController = navController,
         startDestination = "welcome"
     ) {
-
         composable("welcome") {
             WelcomeScreen(navController)
         }
