@@ -48,13 +48,11 @@ fun GameScreen(
     }
 
     // Si el tiempo terminó muestra el resultado
-    LaunchedEffect(timeLeft) {
-
-        if (timeLeft == 0) {
+    LaunchedEffect(message) {
+        if (message == "FIN") {
             navController.navigate("result")
         }
     }
-
     DisposableEffect(Unit) {
 
         onDispose {

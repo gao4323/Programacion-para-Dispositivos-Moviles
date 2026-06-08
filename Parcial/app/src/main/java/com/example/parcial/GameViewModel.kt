@@ -59,19 +59,18 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun startGame() {
 
         _score.value = 0
-        _timeLeft.value = 2
+        _timeLeft.value = 15
         changeColor()
 
         viewModelScope.launch {
 
             while (_timeLeft.value > 0) {
-
                 delay(1000)
                 _timeLeft.value--
             }
 
-            // Guarda el puntaje al terminar
             saveScore()
+            _message.value = "FIN"
         }
     }
 
