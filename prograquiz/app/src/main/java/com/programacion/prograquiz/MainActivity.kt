@@ -16,6 +16,7 @@ import com.programacion.prograquiz.viewmodel.SessionViewModel
 
 class MainActivity : ComponentActivity() {
 
+    // AndroidViewModel requiere factory por defecto
     private val sessionViewModel: SessionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -12,22 +12,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.programacion.prograquiz.model.DifficultyLevel
 import com.programacion.prograquiz.model.GameHistory
-import com.programacion.prograquiz.ui.screens.FeedbackScreen
-import com.programacion.prograquiz.ui.screens.HistoryScreen
-import com.programacion.prograquiz.ui.screens.HomeScreen
-import com.programacion.prograquiz.ui.screens.LevelSelectScreen
-import com.programacion.prograquiz.ui.screens.LoginScreen
-import com.programacion.prograquiz.ui.screens.ProfileScreen
-import com.programacion.prograquiz.ui.screens.QuizScreen
-import com.programacion.prograquiz.ui.screens.RankingScreen
-import com.programacion.prograquiz.ui.screens.ResultScreen
-import com.programacion.prograquiz.ui.screens.SplashScreen
+import com.programacion.prograquiz.ui.screens.*
 import com.programacion.prograquiz.viewmodel.QuizViewModel
 import com.programacion.prograquiz.viewmodel.SessionViewModel
 
 sealed class Screen(val route: String) {
     object Splash      : Screen("splash")
     object Login       : Screen("login")
+    object Register    : Screen("register")
     object Home        : Screen("home")
     object LevelSelect : Screen("level_select")
     object Quiz        : Screen("quiz/{level}") {
@@ -37,11 +29,12 @@ sealed class Screen(val route: String) {
         fun createRoute(isCorrect: Boolean, questionIndex: Int) = "feedback/$isCorrect/$questionIndex"
     }
     object Result      : Screen("result/{score}/{correct}/{total}/{level}") {
-        fun createRoute(score: Int, correct: Int, total: Int, level: String) = "result/$score/$correct/$total/$level"
+        fun createRoute(score: Int, correct: Int, total: Int, level: String) =
+            "result/$score/$correct/$total/$level"
     }
-    object Ranking     : Screen("ranking")
-    object History     : Screen("history")
-    object Profile     : Screen("profile")
+    object Ranking  : Screen("ranking")
+    object History  : Screen("history")
+    object Profile  : Screen("profile")
 }
 
 @Composable
@@ -72,7 +65,19 @@ fun PrograQuizNavHost(navController: NavHostController, sessionViewModel: Sessio
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },
-                onNavigateToRegister = { /* Registro eliminado */ }
+                onNavigateToRegister = { navController.navigate(Screen.Register.route) }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                sessionViewModel  = sessionViewModel,
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -83,7 +88,7 @@ fun PrograQuizNavHost(navController: NavHostController, sessionViewModel: Sessio
                 onNavigateToRanking     = { navController.navigate(Screen.Ranking.route) },
                 onNavigateToHistory     = { navController.navigate(Screen.History.route) },
                 onNavigateToProfile     = { navController.navigate(Screen.Profile.route) },
-                onNavigateToSettings    = { /* Ajustes eliminado */ }
+                onNavigateToSettings    = { }
             )
         }
 
@@ -187,18 +192,30 @@ fun PrograQuizNavHost(navController: NavHostController, sessionViewModel: Sessio
         }
 
         composable(Screen.Ranking.route) {
-            RankingScreen(onNavigateBack = { navController.popBackStack() })
+            RankingScreen(
+                sessionViewModel = sessionViewModel,
+                onNavigateBack   = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.History.route) {
-            HistoryScreen(sessionViewModel = sessionViewModel, onNavigateBack = { navController.popBackStack() })
+            HistoryScreen(
+                sessionViewModel = sessionViewModel,
+                onNavigateBack   = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.Profile.route) {
             ProfileScreen(
                 sessionViewModel    = sessionViewModel,
                 onNavigateBack      = { navController.popBackStack() },
-                onNavigateToHistory = { navController.navigate(Screen.History.route) }
+                onNavigateToHistory = { navController.navigate(Screen.History.route) },
+                onLogout            = {
+                    sessionViewModel.logout()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
             )
         }
     }

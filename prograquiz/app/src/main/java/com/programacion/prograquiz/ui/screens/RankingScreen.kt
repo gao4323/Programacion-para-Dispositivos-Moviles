@@ -11,43 +11,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.programacion.prograquiz.data.mock.MockData
 import com.programacion.prograquiz.model.RankingEntry
 import com.programacion.prograquiz.ui.components.AvatarCircle
 import com.programacion.prograquiz.ui.components.DifficultyBadge
 import com.programacion.prograquiz.ui.components.PQTopBar
 import com.programacion.prograquiz.ui.theme.*
+import com.programacion.prograquiz.viewmodel.SessionViewModel
 
 @Composable
-fun RankingScreen(onNavigateBack: () -> Unit) {
-    val ranking = MockData.rankingList
+fun RankingScreen(sessionViewModel: SessionViewModel, onNavigateBack: () -> Unit) {
+    val currentUser by sessionViewModel.currentUser.collectAsState()
+    val ranking     by sessionViewModel.ranking.collectAsState()
+
+    // Refresca al entrar a la pantalla
+    LaunchedEffect(Unit) { sessionViewModel.refreshRanking() }
 
     Scaffold(
         topBar         = { PQTopBar(title = "Ranking", onBack = onNavigateBack) },
         containerColor = BackgroundDark
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            items(ranking) { entry ->
-                RankingCard(entry)
+        if (ranking.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                Text("Aún no hay puntajes registrados.", color = TextSecondary, fontSize = 14.sp)
+            }
+        } else {
+            LazyColumn(
+                modifier       = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
+                verticalArrangement  = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                items(ranking) { entry ->
+                    RankingCard(entry, isCurrentUser = entry.username == currentUser?.username)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RankingCard(entry: RankingEntry) {
-    val isCurrentUser = entry.username == "Gabriel"
+private fun RankingCard(entry: RankingEntry, isCurrentUser: Boolean) {
     val posColor = when (entry.position) {
         1    -> GoldColor
         2    -> SilverColor
         3    -> BronzeColor
         else -> TextSecondary
     }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape    = RoundedCornerShape(12.dp),
@@ -66,7 +74,10 @@ private fun RankingCard(entry: RankingEntry) {
                 fontSize   = 14.sp,
                 modifier   = Modifier.width(36.dp)
             )
-            AvatarCircle(entry.avatarInitials, size = 36, backgroundColor = if (isCurrentUser) PrimaryBlue else SurfaceDark)
+            AvatarCircle(
+                entry.avatarInitials, size = 36,
+                backgroundColor = if (isCurrentUser) PrimaryBlue else SurfaceDark
+            )
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(

@@ -20,6 +20,7 @@ object MockData {
         favoriteLevel  = DifficultyLevel.INTERMEDIO
     )
 
+    // ── Preguntas ─────────────────────────────────────────────────────────────
 
     val basicQuestions = listOf(
         Question(

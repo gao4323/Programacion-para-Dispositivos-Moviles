@@ -30,10 +30,10 @@ fun ResultScreen(
 ) {
     val wrong   = total - correct
     val message = when {
-        score == 100 -> "¡Perfecto! "
-        score >= 80  -> "¡Muy bien! "
-        score >= 60  -> "¡Bien! Sigue practicando "
-        else         -> "Sigue intentándolo "
+        score == 100 -> "¡Perfecto! 🏆"
+        score >= 80  -> "¡Muy bien! 🎯"
+        score >= 60  -> "¡Bien! Sigue practicando 💪"
+        else         -> "Sigue intentándolo 📚"
     }
 
     Column(

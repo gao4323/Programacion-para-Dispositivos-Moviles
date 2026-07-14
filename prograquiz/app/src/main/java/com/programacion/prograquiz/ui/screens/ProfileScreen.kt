@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.programacion.prograquiz.data.mock.MockData
 import com.programacion.prograquiz.ui.components.AvatarCircle
 import com.programacion.prograquiz.ui.components.PQTopBar
 import com.programacion.prograquiz.ui.theme.*
@@ -25,12 +24,34 @@ import com.programacion.prograquiz.viewmodel.SessionViewModel
 fun ProfileScreen(
     sessionViewModel: SessionViewModel,
     onNavigateBack: () -> Unit,
-    onNavigateToHistory: () -> Unit
+    onNavigateToHistory: () -> Unit,
+    onLogout: () -> Unit
 ) {
-    val user        by sessionViewModel.currentUser.collectAsState()
-    val displayUser = user ?: MockData.currentUser
-    val accuracy    = if (displayUser.totalQuestions > 0)
-        (displayUser.totalCorrect * 100 / displayUser.totalQuestions) else 0
+    val user by sessionViewModel.currentUser.collectAsState()
+    val accuracy = if ((user?.totalQuestions ?: 0) > 0)
+        (user!!.totalCorrect * 100 / user!!.totalQuestions) else 0
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title   = { Text("Cerrar sesión", color = TextPrimary) },
+            text    = { Text("¿Estás seguro de que deseas cerrar sesión?", color = TextSecondary) },
+            confirmButton = {
+                Button(
+                    onClick = { showLogoutDialog = false; onLogout() },
+                    colors  = ButtonDefaults.buttonColors(containerColor = WrongRed)
+                ) { Text("Cerrar sesión", color = Color.White) }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showLogoutDialog = false }) {
+                    Text("Cancelar", color = TextSecondary)
+                }
+            },
+            containerColor = CardDark
+        )
+    }
 
     Scaffold(
         topBar         = { PQTopBar(title = "Mi Perfil", onBack = onNavigateBack) },
@@ -46,32 +67,42 @@ fun ProfileScreen(
         ) {
             Spacer(Modifier.height(24.dp))
 
-            // Avatar y datos básicos
-            AvatarCircle(displayUser.avatarInitials, size = 72, backgroundColor = PrimaryBlue)
+            AvatarCircle(
+                initials         = user?.avatarInitials ?: "?",
+                size             = 72,
+                backgroundColor  = PrimaryBlue
+            )
             Spacer(Modifier.height(12.dp))
-            Text(displayUser.username, color = TextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(displayUser.email, color = TextSecondary, fontSize = 13.sp)
+            Text(
+                user?.username ?: "",
+                color      = TextPrimary,
+                fontSize   = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(user?.email ?: "", color = TextSecondary, fontSize = 13.sp)
 
             Spacer(Modifier.height(28.dp))
 
-            // Estadísticas en cards simples
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape    = RoundedCornerShape(12.dp),
                 colors   = CardDefaults.cardColors(containerColor = CardDark)
             ) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    StatRow(Icons.Default.EmojiEvents, "Mejor puntaje",  "${displayUser.bestScore} pts",  GoldColor)
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    StatRow(Icons.Default.EmojiEvents, "Mejor puntaje",      "${user?.bestScore ?: 0} pts", GoldColor)
                     HorizontalDivider(color = DividerColor)
-                    StatRow(Icons.Default.SportsEsports, "Partidas jugadas", "${displayUser.totalGames}", PrimaryBlue)
+                    StatRow(Icons.Default.SportsEsports, "Partidas jugadas", "${user?.totalGames ?: 0}",    PrimaryBlue)
                     HorizontalDivider(color = DividerColor)
-                    StatRow(Icons.Default.CheckCircle, "Respuestas correctas", "${displayUser.totalCorrect}", CorrectGreen)
+                    StatRow(Icons.Default.CheckCircle, "Respuestas correctas", "${user?.totalCorrect ?: 0}", CorrectGreen)
                     HorizontalDivider(color = DividerColor)
-                    StatRow(Icons.Default.TrendingUp, "Precisión", "$accuracy%", AccentCyan)
+                    StatRow(Icons.Default.TrendingUp, "Precisión",            "$accuracy%",                 AccentCyan)
                 }
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
 
             OutlinedButton(
                 onClick  = onNavigateToHistory,
@@ -83,6 +114,22 @@ fun ProfileScreen(
                 Icon(Icons.Default.History, null, tint = PrimaryBlue, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
                 Text("Ver historial", fontWeight = FontWeight.Medium)
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Button(
+                onClick  = { showLogoutDialog = true },
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                shape    = RoundedCornerShape(10.dp),
+                colors   = ButtonDefaults.buttonColors(
+                    containerColor = WrongRed.copy(alpha = 0.15f),
+                    contentColor   = WrongRed
+                )
+            ) {
+                Icon(Icons.Default.Logout, null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Cerrar sesión", fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(Modifier.height(32.dp))

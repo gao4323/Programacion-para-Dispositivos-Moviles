@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.programacion.prograquiz.data.mock.MockData
 import com.programacion.prograquiz.model.DifficultyLevel
 import com.programacion.prograquiz.ui.components.AvatarCircle
 import com.programacion.prograquiz.ui.components.DifficultyBadge
@@ -34,11 +33,10 @@ fun HomeScreen(
     onNavigateToRanking: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToSettings: () -> Unit   // parámetro conservado pero no usado
+    onNavigateToSettings: () -> Unit
 ) {
     val user    by sessionViewModel.currentUser.collectAsState()
     val history by sessionViewModel.history.collectAsState()
-    val displayUser = user ?: MockData.currentUser
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -73,7 +71,7 @@ fun HomeScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Cabecera simple
+            // Cabecera
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,11 +82,24 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AvatarCircle(displayUser.avatarInitials, size = 44, backgroundColor = PrimaryBlue)
+                    AvatarCircle(
+                        initials        = user?.avatarInitials ?: "?",
+                        size            = 44,
+                        backgroundColor = PrimaryBlue
+                    )
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Hola, ${displayUser.username}", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Text(displayUser.email, color = TextSecondary, fontSize = 12.sp)
+                        Text(
+                            "Hola, ${user?.username ?: ""}",
+                            color      = TextPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize   = 16.sp
+                        )
+                        Text(
+                            user?.email ?: "",
+                            color    = TextSecondary,
+                            fontSize = 12.sp
+                        )
                     }
                 }
             }
@@ -110,7 +121,7 @@ fun HomeScreen(
 
                 Spacer(Modifier.height(24.dp))
 
-                // Niveles disponibles
+                // Niveles
                 SectionHeader("Niveles disponibles")
                 Spacer(Modifier.height(10.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -127,7 +138,11 @@ fun HomeScreen(
 
                 val recent = history.take(3)
                 if (recent.isEmpty()) {
-                    Text("Aún no has jugado ninguna partida.", color = TextSecondary, fontSize = 13.sp)
+                    Text(
+                        "Aún no has jugado ninguna partida.",
+                        color    = TextSecondary,
+                        fontSize = 13.sp
+                    )
                 } else {
                     recent.forEach { game ->
                         val scoreColor = when {
@@ -139,7 +154,7 @@ fun HomeScreen(
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment     = Alignment.CenterVertically
                             ) {
                                 Column {
                                     DifficultyBadge(game.level, small = true)
@@ -148,9 +163,9 @@ fun HomeScreen(
                                 }
                                 Text(
                                     "${game.score} pts",
-                                    color = scoreColor,
+                                    color      = scoreColor,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp
+                                    fontSize   = 15.sp
                                 )
                             }
                         }
@@ -176,7 +191,7 @@ private fun LevelRow(level: DifficultyLevel, icon: ImageVector, onClick: () -> U
         colors   = CardDefaults.cardColors(containerColor = CardDark)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier          = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -189,7 +204,11 @@ private fun LevelRow(level: DifficultyLevel, icon: ImageVector, onClick: () -> U
                 Icon(icon, null, tint = color, modifier = Modifier.size(22.dp))
             }
             Spacer(Modifier.width(12.dp))
-            Text(level.label, color = TextPrimary, fontWeight = FontWeight.Medium, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Text(
+                level.label, color = TextPrimary,
+                fontWeight = FontWeight.Medium, fontSize = 15.sp,
+                modifier = Modifier.weight(1f)
+            )
             Icon(Icons.Default.ChevronRight, null, tint = TextHint, modifier = Modifier.size(18.dp))
         }
     }
